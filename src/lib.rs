@@ -1,6 +1,7 @@
 pub mod people {
     use serde::{Deserialize, Serialize};
     use std::fmt;
+    use std::io;
 
     #[derive(Serialize, Deserialize)]
     pub struct Person {
@@ -66,15 +67,36 @@ pub mod people {
             self.people_list.push(per);
         }
 
-        pub fn save_to_file(&self) -> std::io::Result<()> {
+        pub fn iter(&self) -> std::slice::Iter<'_, Person> {
+            self.people_list.iter()
+        }
+
+        pub fn save_to_file(&self) -> io::Result<()> {
             let persist = std::fs::File::create("mydata")?;
             let result = bincode::serialize_into(persist, self);
-            //result?
-            Ok(())
+            match result {
+                Ok(_) => Ok(()),
+                Err(_) => Err(io::Error::from(io::ErrorKind::InvalidData)),
+            }
+        }
+
+        pub fn load_from_file() -> io::Result<People> {
+            let file = std::fs::File::open("mydata")?;
+            let result = bincode::deserialize_from::<std::fs::File, People>(file);
+            // we need to do this because there is no error conversion
+            match result {
+                Ok(p) => Ok(p),
+                Err(_) => Ok(People::new()), //Err(io::Error::from(io::ErrorKind::InvalidData)),
+            }
         }
     }
 
-    // todo add people collection
-    // todo make people displayable
-    // todo make it serializable
+    impl std::fmt::Display for People {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            for per in self.people_list.iter() {
+                write!(f, "Person: {}", per)?
+            }
+            Ok(())
+        }
+    }
 }

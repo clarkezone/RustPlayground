@@ -1,6 +1,6 @@
 use rusttest::people;
 
-fn main() {
+fn main() -> Result<(), std::io::Error> {
     //TODO: LEARN how to ideomatically block private construction <--
     //TODO: LEARN how to do constructors (static and member)
     // let test_instance = people::Person {
@@ -8,6 +8,15 @@ fn main() {
     //     last_name: String::from("clarke"),
     // };
 
+    let people = people::People::load_from_file().expect("people blew up");
+
+    println!("We have {} people in our collection", people.count());
+    println!("{}", people);
+
+    people.save_to_file()
+}
+
+fn create() {
     let test_instance = people::Person::create("James", "Clarke");
     let bad_instance = people::Person::create("", "");
 
@@ -25,8 +34,4 @@ fn main() {
         Ok(person) => println!("Person is valid {}", person),
         Err(mess) => println!("Person is invalid with reason {}", mess),
     }
-
-    println!("We have {} people in our collection", people.count());
-
-    let result = people.save_to_file();
 }
