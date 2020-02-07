@@ -1,7 +1,7 @@
 pub mod people {
     use serde::{Deserialize, Serialize};
+    use std::error::Error;
     use std::fmt;
-    use std::io;
 
     #[derive(Serialize, Deserialize)]
     pub struct Person {
@@ -27,16 +27,7 @@ pub mod people {
             }
         }
 
-        // fn create_first(first: &str) -> Result<Person, &str> {
-        //     // LEARNING <- no lifetime specifier since only one param
-        //     let p = Person {
-        //         first_name: String::from(first),
-        //         last_name: String::from(""),
-        //     };
-        //     Ok(p)
-        // }
-
-        pub fn create(first: &str, last: &str) -> Result<Person, &'static str> {
+        pub fn new(first: &str, last: &str) -> Result<Person, &'static str> {
             // TODO: is static appropriate as it will only be an error?
             let person = Person {
                 first_name: String::from(first),
@@ -87,23 +78,16 @@ pub mod people {
             self.people_list.iter()
         }
 
-        pub fn save_to_file(&self) -> io::Result<()> {
+        pub fn save_to_file(&self) -> Result<(), Box<dyn Error>> {
             let persist = std::fs::File::create("mydata")?;
-            let result = bincode::serialize_into(persist, self);
-            match result {
-                Ok(_) => Ok(()),
-                Err(_) => Err(io::Error::from(io::ErrorKind::InvalidData)),
-            }
+            let _result = bincode::serialize_into(persist, self)?;
+            Ok(())
         }
 
-        pub fn load_from_file() -> io::Result<People> {
+        pub fn load_from_file() -> Result<People, Box<dyn Error>> {
             let file = std::fs::File::open("mydata")?;
-            let result = bincode::deserialize_from::<std::fs::File, People>(file);
-            // we need to do this because there is no error conversion
-            match result {
-                Ok(p) => Ok(p),
-                Err(_) => Err(io::Error::from(io::ErrorKind::InvalidData)),
-            }
+            let result = bincode::deserialize_from::<std::fs::File, People>(file)?;
+            Ok(result)
         }
     }
 
