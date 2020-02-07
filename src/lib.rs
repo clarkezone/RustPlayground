@@ -5,9 +5,9 @@ pub mod people {
 
     #[derive(Serialize, Deserialize)]
     pub struct Person {
-        first_name: String,
-        last_name: String,
-        title: Option<String>,
+        pub first_name: String,
+        pub last_name: String,
+        pub title: Option<String>,
         // TODO: add an image as png
     }
 
@@ -103,6 +103,28 @@ pub mod people {
     impl std::default::Default for People {
         fn default() -> Self {
             People::new()
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn create() {
+        let test_instance = people::Person::new("James", "Clarke");
+        let bad_instance = people::Person::new("", "");
+
+        if let Ok(i) = test_instance {
+            assert_eq!(i.first_name, "James");
+            assert_eq!(i.last_name, "Clarke");
+        } else {
+            panic!("failed: test_instance is err not OK")
+        }
+
+        if let Err(_i) = bad_instance {
+        } else {
+            panic!("failed: bad instance is OK should be err")
         }
     }
 }

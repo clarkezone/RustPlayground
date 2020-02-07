@@ -20,24 +20,3 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     people.save_to_file()
 }
-
-// Todo convert to a test
-fn create() {
-    let test_instance = people::Person::new("James", "Clarke");
-    let bad_instance = people::Person::new("", "");
-
-    let mut people = people::People::new();
-
-    match test_instance {
-        Ok(person) => {
-            println!("Person is valid {}", person);
-            people.add(person); //person is now invalid
-        }
-        Err(mess) => println!("Person is invalid with reason {}", mess),
-    }
-
-    match bad_instance {
-        Ok(person) => println!("Person is valid {}", person),
-        Err(mess) => println!("Person is invalid with reason {}", mess),
-    }
-}
