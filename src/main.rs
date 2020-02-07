@@ -8,14 +8,23 @@ fn main() -> Result<(), std::io::Error> {
     //     last_name: String::from("clarke"),
     // };
 
-    let people = people::People::load_from_file().expect("people blew up");
+    let mut people = people::People::load_from_file().unwrap_or_default();
 
     println!("We have {} people in our collection", people.count());
     println!("{}", people);
 
+    // if (people.count() == 1) {
+    //     let person = people::Person::create_with_title("James", "Clarke", "Mr");
+    //     people.add(person.unwrap());
+    // }
+
+    //TODO: build a repl for adding people
+    //TODO: fancy console output
+
     people.save_to_file()
 }
 
+// Todo convert to a test
 fn create() {
     let test_instance = people::Person::create("James", "Clarke");
     let bad_instance = people::Person::create("", "");

@@ -6,8 +6,8 @@ pub mod people {
     #[derive(Serialize, Deserialize)]
     pub struct Person {
         first_name: String,
-        // TODO: make last name optional
         last_name: String,
+        title: Option<String>,
         // TODO: add an image as png
     }
 
@@ -41,6 +41,21 @@ pub mod people {
             let person = Person {
                 first_name: String::from(first),
                 last_name: String::from(last),
+                title: None,
+            };
+            Person::validate(person)
+        }
+
+        pub fn create_with_title(
+            first: &str,
+            last: &str,
+            title: &str,
+        ) -> Result<Person, &'static str> {
+            // TODO: is static appropriate as it will only be an error?
+            let person = Person {
+                first_name: String::from(first),
+                last_name: String::from(last),
+                title: Some(String::from(title)),
             };
             Person::validate(person)
         }
@@ -52,6 +67,7 @@ pub mod people {
     }
 
     impl People {
+        //TODO can we derivedefault instead?
         pub fn new() -> People {
             let people = People {
                 people_list: Vec::new(),
@@ -86,7 +102,7 @@ pub mod people {
             // we need to do this because there is no error conversion
             match result {
                 Ok(p) => Ok(p),
-                Err(_) => Ok(People::new()), //Err(io::Error::from(io::ErrorKind::InvalidData)),
+                Err(_) => Err(io::Error::from(io::ErrorKind::InvalidData)),
             }
         }
     }
@@ -97,6 +113,12 @@ pub mod people {
                 write!(f, "Person: {}", per)?
             }
             Ok(())
+        }
+    }
+
+    impl std::default::Default for People {
+        fn default() -> Self {
+            People::new()
         }
     }
 }
